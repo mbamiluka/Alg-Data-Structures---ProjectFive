@@ -6,7 +6,7 @@
  *
  */
 public class Postfix 
-{	
+{
 		/**
 		 * This method checks if a specified character is any of the valid 
 		 * BIDMAS operators. 
@@ -27,8 +27,17 @@ public class Postfix
 	        
 	        return false;
 	    }
-
-	    public int getPrecedence ( char character) 
+	    //*********************************************************************
+	    /**
+	     * This method returns a value for the specific 
+	     * PEMDAS operators. 
+	     * @param	   character
+	     * @return     1 if the value is + or -
+	     * @return	   2 if the value is * or /
+         * @return	   3 if the value is ^
+	     * @return    -1 if the value is invalid
+	     */
+	    public int getPrecedence ( char character)
 	    {
 	        if ( character == '+' || character == '-') 
 	        {        
@@ -44,10 +53,17 @@ public class Postfix
 	            return 3;
 	        }
 	        return -1;
-	    }
-
-	    // Check if the specified character is an operand
-	    public boolean isOperand ( char character) 
+	        
+	    } // End getPrecedence
+	    
+	    //*********************************************************************
+	    /**
+	     * This method checks if a specified character is within a specific
+	     * range of characters  
+	     * @param	character
+	     * @return	true if in range + false if otherwise
+	     */	    
+	    public static boolean isOperand ( char character) 
 	    {
 	        if (character >= 'a' && character <= 'z' || 
 	        	character >= 'A' && character <= 'Z'
@@ -57,7 +73,41 @@ public class Postfix
 	        }
 	        return false;
 	    }
+	  //***********************************************************************
+	    /**
+	     * Method checks to see if the operands all have  
+	     * an operator next to them 
+	     * @param	   String infix 
+	     * @return	   true if two operands are next to eachother
+	     */
+	    public static boolean isAdjacentOperand ( String infix) 
+	    {
+	    	 infix = infix.replaceAll("\\s+","");
+		     char first;
+	         char second;
 
+	         for ( int i = 0; i < infix.length() - 1; i++) 
+	         {
+	            first = infix.charAt(i);
+	            second = infix.charAt(i+1);
+
+	            if ( isOperand(first) && isOperand ( second))
+	            {
+	               return true;
+	            }
+	            
+	         } // End for loop 
+	         return false;
+		   } // End operandCheck
+	    
+	    //*********************************************************************
+	    
+	    /**
+	     * This method converts a string from its infix to a 
+         * postfix form  
+	     * @param	String infix  
+	     * @return	String postfix which is from infix String
+	     */
 	    public String convertToPostfix ( String infix) 
 	    {
 	        Stack<Character> stack = new Stack<Character>();
@@ -66,20 +116,26 @@ public class Postfix
 	        char character;
 
 	        for ( int i = 0; i < infix.length(); i++) 
-	        {
+	        {	        	
+	        	infix = infix.trim();
+	        	
 	        	// pick each letter in infix string
-	            character = infix.charAt(i);
-
+	            character = infix.charAt (i);
+	            		
 	            // Then, check if character is an operand
 	            // If so, it will be added to the postfix variable
 	            if ( isOperand ( character)) 
 	            {
-	                postfix += ( character);
-	            } 
+	                postfix += ( character) + " ";
+	                	
+	            }
+	            
+	            // if we encounter '(' we push to stack
 	            else if ( character == '(') 
 	            {
 	                stack.push ( character);
 	            }
+	            
 	            // If current character is ‘)’, pop and output from stack
 	            // when ‘(‘ is encountered we stop popping.
 	            else if ( character == ')') 
@@ -87,24 +143,25 @@ public class Postfix
 
 	                while ( !stack.isEmpty() && stack.peek() != '(') 
 	                {
-	                	postfix += stack.pop();
+	                	postfix += stack.pop() + " ";
 	                }
 	                if ( !stack.isEmpty() && stack.peek() != '(')
 	                {
-	                    return null;
+	                    return "None";
 	                }
 	                else if ( !stack.isEmpty())
 	                {
 	                    stack.pop();
 	                }
 	            }
-	            else if 
-	            (isOperator ( character)) // operator encountered
+	            
+	            else if ( isOperator ( character))
 	            {
-	                if ( !stack.isEmpty() && 
-	                	  getPrecedence (character) <= getPrecedence ( stack.peek())) 
+	                if ( !stack.isEmpty () && 
+	                	  getPrecedence ( character) <= 
+	                	  getPrecedence ( stack.peek()	)) 
 	                {
-	                	postfix += ( stack.pop());
+	                	postfix += ( stack.pop() + " ");
 	                }
 	                stack.push ( character);
 	            }
@@ -112,8 +169,12 @@ public class Postfix
 
 	        while ( !stack.isEmpty()) 
 	        {
-	        	postfix += ( stack.pop());
+	        	postfix += ( stack.pop() + " ");
 	        }
 	        return postfix;
-	    }
-}
+	        
+	    } // End convertToPostfix
+	    
+	    //*********************************************************************
+
+} // End Postix
